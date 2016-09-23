@@ -148,24 +148,28 @@ class MainPage(webapp2.RequestHandler):
         # Calculate stats and display.
         user_stats = {}
         for player in players:
-            user_stats[player.ldap] = {'wins': 0, 'losses': 0, 'cups': 0}
+            user_stats[player.ldap] = {'wins': 0, 'losses': 0, 'possible_cups': 0, 'made_cups': 0}
         # Run through each game and update the base users stats.
         for match in matches:
             user_stats[match.winner1]['wins'] += 1
             user_stats[match.winner2]['wins'] += 1
             user_stats[match.loser1]['losses'] += 1
             user_stats[match.loser2]['losses'] += 1
-            user_stats[match.winner1]['cups'] += 6.0 * match.winner1_cups / match.winner_total_cups
-            user_stats[match.winner2]['cups'] += 6.0 * match.winner2_cups / match.winner_total_cups
-            user_stats[match.loser1]['cups'] += 6.0 * match.loser1_cups / match.loser_total_cups
-            user_stats[match.loser2]['cups'] += 6.0 * match.loser2_cups / match.loser_total_cups
+            user_stats[match.winner1]['made_cups'] += match.winner1_cups
+            user_stats[match.winner1]['possible_cups'] += match.winner_total_cups
+            user_stats[match.winner2]['made_cups'] += match.winner2_cups
+            user_stats[match.winner2]['possible_cups'] += match.winner_total_cups
+            user_stats[match.loser1]['made_cups'] += match.loser1_cups
+            user_stats[match.loser1]['possible_cups'] += match.loser_total_cups
+            user_stats[match.loser2]['made_cups'] += match.loser2_cups
+            user_stats[match.loser2]['possible_cups'] += match.loser_total_cups
 
         # Run through each player and update calculated user stats.
         sortable_user_list = []
         for k,v in user_stats.iteritems():
             user_stats[k]['games'] = games = v['wins'] + v['losses']
             user_stats[k]['ratio'] = ratio = 0.0 if games == 0 else 1.0 * v['wins'] / games
-            user_stats[k]['cpg'] = cpg = 0.0 if games == 0 else v['cups'] / games
+            user_stats[k]['cpg'] = cpg = 0.0 if games == 0 else 6.0 * v['made_cups'] / v['possible_cups']
             #user_stats[k]['exp'] = exp = min(1.0, games / 10.0)
             exp_threshold = 12.0
             user_stats[k]['exp'] = exp = 1 - 1 / (pow(2 * games / exp_threshold, 3) + pow(games / exp_threshold, 5) + 1)
