@@ -41,7 +41,7 @@ MAIN_PAGE_TEMPLATE = """\
     <hr />
 """
 
-DEFAULT_SEASON_NAME = '2016_B'
+DEFAULT_SEASON_NAME = '2017_A’
 
 # We set a parent key on the 'Matches' to ensure that they are all
 # in the same entity group. Queries across the single entity group
