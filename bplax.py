@@ -173,6 +173,7 @@ class MainPage(webapp2.RequestHandler):
             #user_stats[k]['exp'] = exp = min(1.0, games / 10.0)
             exp_threshold = 12.0
             user_stats[k]['exp'] = exp = 1 - 1 / (pow(2 * games / exp_threshold, 3) + pow(games / exp_threshold, 5) + 1)
+            #user_stats[k]['bpa'] = bpa = ratio + (2.0 * cpg / 6.0) + exp
             user_stats[k]['bpa'] = bpa = ratio + (3.0 * cpg / 6.0)
             user_stats[k]['ldap'] = k
             sortable_user_list.append(user_stats[k])
@@ -182,10 +183,10 @@ class MainPage(webapp2.RequestHandler):
 
         # Print out user stats in sorted order.
         self.response.write('<h3>Stats</h3><table border="1" cellpadding="10">')
-        self.response.write('<tr><th>Player</th><th>Wins</th><th>Losses</th><th>Ratio</th><th>CPG</th><th>XP</th><th>BPA</th></tr>')
+        self.response.write('<tr><th>Player</th><th>Wins</th><th>Losses</th><th>Ratio</th><th>MC</th><th>PC</th><th>CPG</th><th>XP</th><th>BPA</th></tr>')
         for v in sorted_user_stats:
-          self.response.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td></tr>'
-              % (v['ldap'], v['wins'], v['losses'], v['ratio'], v['cpg'], v['exp'], v['bpa']))
+          self.response.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%.3f</td><td>%d</td><td>%d</td><td>%.3f</td><td>%.3f</td><td><b>%.3f</b></td></tr>'
+              % (v['ldap'], v['wins'], v['losses'], v['ratio'], v['made_cups'], v['possible_cups'], v['cpg'], v['exp'], v['bpa']))
         self.response.write('</table>')
 
         self.response.write('</body></html>')
@@ -241,3 +242,4 @@ app = webapp2.WSGIApplication([
     ('/postmatch', PostMatch),
     ('/postplayer', PostPlayer),
 ], debug=True)
+
