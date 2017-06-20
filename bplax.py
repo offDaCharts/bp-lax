@@ -41,7 +41,7 @@ MAIN_PAGE_TEMPLATE = """\
     <hr />
 """
 
-DEFAULT_SEASON_NAME = '2017_A'
+DEFAULT_SEASON_NAME = '2017_B'
 
 # We set a parent key on the 'Matches' to ensure that they are all
 # in the same entity group. Queries across the single entity group
@@ -133,7 +133,21 @@ class MainPage(webapp2.RequestHandler):
         matches = match_query.fetch(100)
         self.response.write('<h3>Game Summary</h3><table border="1" cellpadding="10">')
         self.response.write('<tr><th>Winner 1</th><th>N</th><th>B</th><th>Winner 2</th><th>N</th><th>B</th><th>PC</th><th>Loser 1</th><th>N</th><th>B</th><th>Loser 2</th><th>N</th><th>B</th><th>PC</th><th>Logged by</th><th>Timestamp</th></tr>')
+        
         for match in matches:
+            # Hotfix for Ali having 2 fucking ldaps :p
+#            for key in match:
+#                if match[key] == "alfish":
+#                    match[key] = "stanfield"
+            if match.winner1 == "alfish":
+                match.winner1 = "stanfield"
+            if match.winner2 == "alfish":
+                match.winner2 = "stanfield"
+            if match.loser1 == "alfish":
+                match.loser1 = "stanfield"
+            if match.loser2 == "alfish":
+                match.loser2 = "stanfield"
+
             author = match.author
             self.response.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td><td>%s</td></tr>' %
                                 (match.winner1, match.winner1_cups, match.winner1_bonus,
