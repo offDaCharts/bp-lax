@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <style>
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+          <a class="navbar-brand" href="#">BP LAX</a>
+          <div class="collapse navbar-collapse" id="navbarsExample02">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" id="submit-game-nav" href="#">Submit Game</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="admin-nav" href="#">Admin</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="game-summary-nav" href="#">Game Summary</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="stats-nav" href="#">Stats</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+    <div class="container mt-3 submit-game-container">
+        <h3>Submit Game</h3>
+        <form action="/postmatch?{{sign_query_params}}" method="post">
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 1:</div>
+                <div class="col col-lg-3">{{players_text1}}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 1 Raw:</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="winner1_cups" value="3"/></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 1 Bonus</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="winner1_bonus" value="0" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 2</div>
+                <div class="col col-lg-3">{{players_text2}}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 2 Raw</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="winner2_cups" value="3" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner 2 Bonus</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="winner2_bonus" value="0" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Winner Total Possible Cups</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="winner_total_cups" value="6" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 1</div>
+                <div class="col col-lg-3">{{players_text3}}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 1 Raw</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="loser1_cups" value="3" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 1 Bonus</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="loser1_bonus" value="0" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 2</div>
+                <div class="col col-lg-3">{{players_text4}}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 2 Raw</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="loser2_cups" value="3" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser 2 Bonus</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="loser2_bonus" value="0" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3">Loser Total Possible Cups</div>
+                <div class="col col-lg-3"><input type="number" pattern="d*" name="loser_total_cups" value="6" /></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-lg-3"><input type="submit" value="Submit Match"></div>
+            </div>
+        </form>
+    </div>
+    <div class="container mt-3 admin-container hidden">
+        <h3>Admin</h3>
+        <form>
+            <div class="form-group">
+                <label>Season:</label> <input value="{{season_name}}" name="season_name">
+                <input type="submit" value="switch">
+            </div>
+        </form>
+        <form action="/postplayer?{{sign_query_params}}" method="post">
+            <div class="form-group">
+                Add player: <input type="text" name="ldap" />
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+        <a href="{{url}}">{{url_linktext}}</a>
+    </div>
+    <div class="container mt-3 game-summary-container hidden">
+        <h3>Game Summary</h3>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Winner 1</th>
+                    <th>N</th>
+                    <th>B</th>
+                    <th>Winner 2</th>
+                    <th>N</th>
+                    <th>B</th>
+                    <th>PC</th>
+                    <th>Loser 1</th>
+                    <th>N</th>
+                    <th>B</th>
+                    <th>Loser 2</th>
+                    <th>N</th>
+                    <th>B</th>
+                    <th>PC</th>
+                    <th>Logged by</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            {% for match in matches %}
+                <tr>
+                    <td>{{match.winner1}}</td>
+                    <td>{{match.winner1_cups}}</td>
+                    <td>{{match.winner1_bonus,}}</td>
+                    <td>{{match.winner2}}</td>
+                    <td>{{match.winner2_cups}}</td>
+                    <td>{{match.winner2_bonus}}</td>
+                    <td>{{match.winner_total_cups,}}</td>
+                    <td>{{match.loser1}}</td>
+                    <td>{{match.loser1_cups}}</td>
+                    <td>{{match.loser1_bonus,}}</td>
+                    <td>{{match.loser2}}</td>
+                    <td>{{match.loser2_cups}}</td>
+                    <td>{{match.loser2_bonus}}</td>
+                    <td>{{match.loser_total_cups,}}</td>
+                    <td>{{match.author}}</td>
+                    <td>{{match.date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p>N = Net, B = Bonus, PC = Possible Cups</p>
+    </div>
+    <div class="container mt-3 stats-container hidden">
+        <h3>Stats</h3>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Player</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Ratio</th>
+                    <th>MC</th>
+                    <th>PC</th>
+                    <th>CPG</th>
+                    <th>XP</th>
+                    <th>BPA</th>
+                </tr>
+            </thead>
+        <tr>
+            {% for v in sorted_user_stats %}
+                <td>{{v['ldap']}}</td>
+                <td>{{v['wins']}}</td>
+                <td>{{v['losses']}}</td>
+                <td>{{'%.3f' % v['ratio']}}</td>
+                <td>{{v['made_cups']}}</td>
+                <td>{{v['possible_cups']}}</td>
+                <td>{{'%.3f' % v['cpg']}}</td>
+                <td>{{'%.3f' % v['exp']}}</td>
+                <td><b>{{'%.3f' % v['bpa']}}</b></td>
+            {% endfor %}
+        </tr>
+    </table>
+    </div>
+    </body>
+    <script>
+        var navLinks = document.getElementsByClassName('nav-link');
+        navLinks = Array.prototype.slice.call(navLinks);
+        var navItems = document.getElementsByClassName('nav-item');
+        navItems = Array.prototype.slice.call(navItems);
+        var containers = document.getElementsByClassName('container');
+        containers = Array.prototype.slice.call(containers);
+
+        function updateActiveItem(newActiveItem) {
+            navItems.forEach(function each(el) {
+                el.classList.remove('active');
+            });
+            newActiveItem.classList.add('active');
+        }
+        function updateActiveContainer(activeContainer) {
+            containers.forEach(function each(el) {
+                if (!el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                }
+            });
+            activeContainer.classList.remove('hidden');
+        }
+        function getContainer(navEl) {
+            var containerClass = navEl.id.replace('nav', 'container');
+            return document.getElementsByClassName(containerClass)[0];
+        }
+        navLinks.forEach(function each(el) {
+            el.addEventListener('click', function onClick(e) {
+                e.stopPropagation();
+                updateActiveItem(el.parentElement);
+                updateActiveContainer(getContainer(el));
+            });
+        });
+    </script>
+</html>

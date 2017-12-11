@@ -7,3 +7,9 @@ threadsafe: true
 handlers:
 - url: /.*
   script: bplax.app
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest

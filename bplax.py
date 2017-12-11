@@ -2,44 +2,18 @@ import cgi
 import urllib
 import datetime
 from operator import itemgetter
+import os
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
 import webapp2
+import jinja2
 
-MAIN_PAGE_TEMPLATE = """\
-    <h3>Submit Game</h3>
-    <form action="/postmatch?%s" method="post">
-      <div>Winner 1: %s</div>
-      <div>Winner 1 Raw: <input type="number" pattern="d*" name="winner1_cups" value="3"/></div>
-      <div>Winner 1 Bonus: <input type="number" pattern="d*" name="winner1_bonus" value="0" /></div>
-      <div>Winner 2: %s</div>
-      <div>Winner 2 Raw: <input type="number" pattern="d*" name="winner2_cups" value="3" /></div>
-      <div>Winner 2 Bonus: <input type="number" pattern="d*" name="winner2_bonus" value="0" /></div>
-      <div>Winner Total Possible Cups: <input type="number" pattern="d*" name="winner_total_cups" value="6" /></div>
-      <div>Loser 1: %s</div>
-      <div>Loser 1 Raw: <input type="number" pattern="d*" name="loser1_cups" value="3" /></div>
-      <div>Loser 1 Bonus: <input type="number" pattern="d*" name="loser1_bonus" value="0" /></div>
-      <div>Loser 2: %s</div>
-      <div>Loser 2 Raw: <input type="number" pattern="d*" name="loser2_cups" value="3" /></div>
-      <div>Loser 2 Bonus: <input type="number" pattern="d*" name="loser2_bonus" value="0" /></div>
-      <div>Loser Total Possible Cups: <input type="number" pattern="d*" name="loser_total_cups" value="6" /></div>
-      <div><input type="submit" value="Submit Match"></div>
-    </form>
-    <hr>
-    <h3>Admin</h3>
-    <form>
-      Season: <input value="%s" name="season_name">
-      <input type="submit" value="switch">
-    </form>
-    <form action="/postplayer?%s" method="post">
-      Add player: <input type="text" name="ldap" />
-      <input type="submit" value="Submit"><br />
-    </form>
-    <a href="%s">%s</a>
-    <hr />
-"""
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 DEFAULT_SEASON_NAME = '2018_A'
 
@@ -93,7 +67,7 @@ class MainPage(webapp2.RequestHandler):
         if not user:
             self.redirect(users.create_login_url(self.request.uri))
 
-        self.response.write('<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>')
+        template = JINJA_ENVIRONMENT.get_template('index.j2')
         season_name = self.request.get('season_name',
                                           DEFAULT_SEASON_NAME)
 
@@ -116,11 +90,17 @@ class MainPage(webapp2.RequestHandler):
         # Write the submission form and the footer of the page
         sign_query_params = urllib.urlencode({'season_name':
                                               season_name})
-        self.response.write(MAIN_PAGE_TEMPLATE %
-                            (sign_query_params, players_text1, players_text2, players_text3, players_text4,
-                             cgi.escape(season_name),
-                             sign_query_params,
-                             url, url_linktext))
+        template_args = {
+            sign_query_params: sign_query_params,
+            players_text1: players_text1,
+            players_text2: players_text2,
+            players_text3: players_text3,
+            players_text4: players_text4,
+            season_name: cgi.escape(season_name),
+            sign_query_params: sign_query_params,
+            url: url,
+            url_linktext: url_linktext
+        }
 
         # Ancestor Queries, as shown here, are strongly consistent
         # with the High Replication Datastore. Queries that span
@@ -131,9 +111,7 @@ class MainPage(webapp2.RequestHandler):
         match_query = Match.query(
             ancestor=season_key(season_name)).order(-Match.date)
         matches = match_query.fetch(100)
-        self.response.write('<h3>Game Summary</h3><table border="1" cellpadding="10">')
-        self.response.write('<tr><th>Winner 1</th><th>N</th><th>B</th><th>Winner 2</th><th>N</th><th>B</th><th>PC</th><th>Loser 1</th><th>N</th><th>B</th><th>Loser 2</th><th>N</th><th>B</th><th>PC</th><th>Logged by</th><th>Timestamp</th></tr>')
-        
+
         for match in matches:
             # Hotfix for Ali having 2 fucking ldaps :p
 #            for key in match:
@@ -147,17 +125,7 @@ class MainPage(webapp2.RequestHandler):
                 match.loser1 = "stanfield"
             if match.loser2 == "alfish":
                 match.loser2 = "stanfield"
-
-            author = match.author
-            self.response.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%s</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td><td>%s</td></tr>' %
-                                (match.winner1, match.winner1_cups, match.winner1_bonus,
-                                 match.winner2, match.winner2_cups, match.winner2_bonus, match.winner_total_cups,
-                                 match.loser1, match.loser1_cups, match.loser1_bonus,
-                                 match.loser2, match.loser2_cups, match.loser2_bonus, match.loser_total_cups,
-                                 author, match.date.strftime('%Y-%m-%d %H:%M:%S')))
-        self.response.write('</table>')
-        self.response.write('<p>N = Net, B = Bonus, PC = Possible Cups</p>')
-        self.response.write('<hr />')
+        template_args['matches'] = matches
 
         # Calculate stats and display.
         user_stats = {}
@@ -195,15 +163,9 @@ class MainPage(webapp2.RequestHandler):
         # Sort by BPA.
         sorted_user_stats = sorted(sortable_user_list, key=itemgetter('bpa'), reverse=True)
 
-        # Print out user stats in sorted order.
-        self.response.write('<h3>Stats</h3><table border="1" cellpadding="10">')
-        self.response.write('<tr><th>Player</th><th>Wins</th><th>Losses</th><th>Ratio</th><th>MC</th><th>PC</th><th>CPG</th><th>XP</th><th>BPA</th></tr>')
-        for v in sorted_user_stats:
-          self.response.write('<tr><td>%s</td><td>%d</td><td>%d</td><td>%.3f</td><td>%d</td><td>%d</td><td>%.3f</td><td>%.3f</td><td><b>%.3f</b></td></tr>'
-              % (v['ldap'], v['wins'], v['losses'], v['ratio'], v['made_cups'], v['possible_cups'], v['cpg'], v['exp'], v['bpa']))
-        self.response.write('</table>')
+        template_args['sorted_user_stats'] = sorted_user_stats
 
-        self.response.write('</body></html>')
+        self.response.write(template.render(template_args))
 
 class PostMatch(webapp2.RequestHandler):
     def post(self):
