@@ -171,20 +171,20 @@
                     <th>BPA</th>
                 </tr>
             </thead>
-        <tr>
             {% for v in sorted_user_stats %}
-                <td>{{v['ldap']}}</td>
-                <td>{{v['wins']}}</td>
-                <td>{{v['losses']}}</td>
-                <td>{{'%.3f' % v['ratio']}}</td>
-                <td>{{v['made_cups']}}</td>
-                <td>{{v['possible_cups']}}</td>
-                <td>{{'%.3f' % v['cpg']}}</td>
-                <td>{{'%.3f' % v['exp']}}</td>
-                <td><b>{{'%.3f' % v['bpa']}}</b></td>
+                <tr>
+                    <td>{{v['ldap']}}</td>
+                    <td>{{v['wins']}}</td>
+                    <td>{{v['losses']}}</td>
+                    <td>{{'%.3f' % v['ratio']}}</td>
+                    <td>{{v['made_cups']}}</td>
+                    <td>{{v['possible_cups']}}</td>
+                    <td>{{'%.3f' % v['cpg']}}</td>
+                    <td>{{'%.3f' % v['exp']}}</td>
+                    <td><b>{{'%.3f' % v['bpa']}}</b></td>
+                </tr>
             {% endfor %}
-        </tr>
-    </table>
+        </table>
     </div>
     </body>
     <script>
