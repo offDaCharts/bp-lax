@@ -34,7 +34,13 @@
         <form action="/postmatch?{{sign_query_params}}" method="post">
             <div class="row mb-2">
                 <div class="col col-lg-3">Winner 1:</div>
-                <div class="col col-lg-3">{{players_text1}}</div>
+                <div class="col col-lg-3">
+                    <select name="winner1">
+                        {% for player in players %}
+                            <option>{{player.ldap}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Winner 1 Raw:</div>
@@ -46,7 +52,13 @@
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Winner 2</div>
-                <div class="col col-lg-3">{{players_text2}}</div>
+                <div class="col col-lg-3">
+                    <select name="winner2">
+                        {% for player in players %}
+                            <option>{{player.ldap}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Winner 2 Raw</div>
@@ -62,7 +74,13 @@
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Loser 1</div>
-                <div class="col col-lg-3">{{players_text3}}</div>
+                <div class="col col-lg-3">
+                    <select name="loser1">
+                        {% for player in players %}
+                            <option>{{player.ldap}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Loser 1 Raw</div>
@@ -74,7 +92,13 @@
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Loser 2</div>
-                <div class="col col-lg-3">{{players_text4}}</div>
+                <div class="col col-lg-3">
+                    <select name="loser2">
+                        {% for player in players %}
+                            <option>{{player.ldap}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="row mb-2">
                 <div class="col col-lg-3">Loser 2 Raw</div>
@@ -112,6 +136,7 @@
     <div class="container mt-3 game-summary-container hidden">
         <h3>Game Summary</h3>
         <table class="table table-striped">
+            <caption>N = Net, B = Bonus, PC = Possible Cups</caption>
             <thead class="thead-dark">
                 <tr>
                     <th>Winner 1</th>
@@ -132,28 +157,29 @@
                     <th>Timestamp</th>
                 </tr>
             </thead>
+            <tbody>
             {% for match in matches %}
                 <tr>
                     <td>{{match.winner1}}</td>
                     <td>{{match.winner1_cups}}</td>
-                    <td>{{match.winner1_bonus,}}</td>
+                    <td>{{match.winner1_bonus}}</td>
                     <td>{{match.winner2}}</td>
                     <td>{{match.winner2_cups}}</td>
                     <td>{{match.winner2_bonus}}</td>
-                    <td>{{match.winner_total_cups,}}</td>
+                    <td>{{match.winner_total_cups}}</td>
                     <td>{{match.loser1}}</td>
                     <td>{{match.loser1_cups}}</td>
-                    <td>{{match.loser1_bonus,}}</td>
+                    <td>{{match.loser1_bonus}}</td>
                     <td>{{match.loser2}}</td>
                     <td>{{match.loser2_cups}}</td>
                     <td>{{match.loser2_bonus}}</td>
-                    <td>{{match.loser_total_cups,}}</td>
+                    <td>{{match.loser_total_cups}}</td>
                     <td>{{match.author}}</td>
                     <td>{{match.date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
-        <p>N = Net, B = Bonus, PC = Possible Cups</p>
     </div>
     <div class="container mt-3 stats-container hidden">
         <h3>Stats</h3>
@@ -171,20 +197,22 @@
                     <th>BPA</th>
                 </tr>
             </thead>
-        <tr>
-            {% for v in sorted_user_stats %}
-                <td>{{v['ldap']}}</td>
-                <td>{{v['wins']}}</td>
-                <td>{{v['losses']}}</td>
-                <td>{{'%.3f' % v['ratio']}}</td>
-                <td>{{v['made_cups']}}</td>
-                <td>{{v['possible_cups']}}</td>
-                <td>{{'%.3f' % v['cpg']}}</td>
-                <td>{{'%.3f' % v['exp']}}</td>
-                <td><b>{{'%.3f' % v['bpa']}}</b></td>
-            {% endfor %}
-        </tr>
-    </table>
+            <tbody>
+                {% for v in sorted_user_stats %}
+                    <tr>
+                        <td>{{v['ldap']}}</td>
+                        <td>{{v['wins']}}</td>
+                        <td>{{v['losses']}}</td>
+                        <td>{{'%.3f' % v['ratio']}}</td>
+                        <td>{{v['made_cups']}}</td>
+                        <td>{{v['possible_cups']}}</td>
+                        <td>{{'%.3f' % v['cpg']}}</td>
+                        <td>{{'%.3f' % v['exp']}}</td>
+                        <td><b>{{'%.3f' % v['bpa']}}</b></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     </body>
     <script>
