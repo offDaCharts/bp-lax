@@ -154,6 +154,7 @@ class MainPage(webapp2.RequestHandler):
         sorted_user_stats = sorted(sortable_user_list, key=itemgetter('bpa'), reverse=True)
 
         template_args['sorted_user_stats'] = sorted_user_stats
+        template_args['season_name'] = season_name
 
         self.response.write(template.render(template_args))
 
