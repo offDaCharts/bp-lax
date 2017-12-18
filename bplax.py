@@ -75,13 +75,6 @@ class MainPage(webapp2.RequestHandler):
         player_query = Player.query(
             ancestor=player_key()).order(Player.date)
         players = player_query.fetch(1000)
-        player_select_text = ''
-        for player in players:
-            player_select_text += ('<option>%s</option>' % player.ldap)
-        players_text1 = '<select name="%s">%s</select>' % ('winner1', player_select_text)
-        players_text2 = '<select name="%s">%s</select>' % ('winner2', player_select_text)
-        players_text3 = '<select name="%s">%s</select>' % ('loser1', player_select_text)
-        players_text4 = '<select name="%s">%s</select>' % ('loser2', player_select_text)
 
        # Create logout url.
         url = users.create_logout_url(self.request.uri)
@@ -91,15 +84,12 @@ class MainPage(webapp2.RequestHandler):
         sign_query_params = urllib.urlencode({'season_name':
                                               season_name})
         template_args = {
-            sign_query_params: sign_query_params,
-            players_text1: players_text1,
-            players_text2: players_text2,
-            players_text3: players_text3,
-            players_text4: players_text4,
-            season_name: cgi.escape(season_name),
-            sign_query_params: sign_query_params,
-            url: url,
-            url_linktext: url_linktext
+            'sign_query_params': sign_query_params,
+            'season_name': cgi.escape(season_name),
+            'sign_query_params': sign_query_params,
+            'url': url,
+            'url_linktext': url_linktext,
+            'players': players,
         }
 
         # Ancestor Queries, as shown here, are strongly consistent
