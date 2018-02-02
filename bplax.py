@@ -39,18 +39,23 @@ class Match(ndb.Model):
     """A main model for representing an individual Match entry."""
     author = ndb.StringProperty(indexed=False)
     winner1 = ndb.StringProperty(indexed=False)
-    winner1_cups = ndb.FloatProperty(indexed=False)
-    winner1_bonus = ndb.FloatProperty(indexed=False)
+    # Note: Cups and bonus must be GenericProperty due to all cups made before
+    # 2/1/18 stored as ints and all cups after stored as floats due to the
+    # introduction of a 'shared' bonus cup (ie 2 balls go into the same cup at
+    # the same time so therefore the bonus explosion cup credit is shared).
+    # Float validation is made at form submission time.
+    winner1_cups = ndb.GenericProperty(indexed=False)
+    winner1_bonus = ndb.GenericProperty(indexed=False)
     winner2 = ndb.StringProperty(indexed=False)
-    winner2_cups = ndb.FloatProperty(indexed=False)
-    winner2_bonus = ndb.FloatProperty(indexed=False)
+    winner2_cups = ndb.GenericProperty(indexed=False)
+    winner2_bonus = ndb.GenericProperty(indexed=False)
     winner_total_cups = ndb.IntegerProperty(indexed=False)
     loser1 = ndb.StringProperty(indexed=False)
-    loser1_cups = ndb.FloatProperty(indexed=False)
-    loser1_bonus = ndb.FloatProperty(indexed=False)
+    loser1_cups = ndb.GenericProperty(indexed=False)
+    loser1_bonus = ndb.GenericProperty(indexed=False)
     loser2 = ndb.StringProperty(indexed=False)
-    loser2_cups = ndb.FloatProperty(indexed=False)
-    loser2_bonus = ndb.FloatProperty(indexed=False)
+    loser2_cups = ndb.GenericProperty(indexed=False)
+    loser2_bonus = ndb.GenericProperty(indexed=False)
     loser_total_cups = ndb.IntegerProperty(indexed=False)
     date = ndb.DateTimeProperty(auto_now_add=True)
 
