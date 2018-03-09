@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <style>
             .hidden {
                 display: none;
@@ -186,6 +187,7 @@
         <table class="table table-striped">
             <thead class="thead-dark">
                 <tr>
+                    <th>Rank</th>
                     <th>Player</th>
                     <th>Wins</th>
                     <th>Losses</th>
@@ -200,6 +202,7 @@
             <tbody>
                 {% for v in sorted_user_stats %}
                     <tr>
+                        <td>{{v['rank']}}</td>
                         <td>{{v['ldap']}}</td>
                         <td>{{v['wins']}}</td>
                         <td>{{v['losses']}}</td>
@@ -213,6 +216,8 @@
                 {% endfor %}
             </tbody>
         </table>
+        <h3>BPA Over Time</h3>
+        <div id="bpaChart"></div>
     </div>
     </body>
     <script>
@@ -248,5 +253,20 @@
                 updateActiveContainer(getContainer(el));
             });
         });
+
+        var data = [
+            {% for v in sorted_user_stats %}
+                {type: "scatter", name: "{{v['ldap']}}", x: [
+                {% for v2 in v['bpa_over_time'] %}
+                    {{v2[0]}},
+                {% endfor %}
+                ], y: [
+                {% for v2 in v['bpa_over_time'] %}
+                    {{v2[1]}},
+                {% endfor %}
+                ]},
+            {% endfor %}
+        ];
+        Plotly.newPlot('bpaChart', data);
     </script>
 </html>
