@@ -35,6 +35,15 @@ def player_key():
     return ndb.Key('Player', 'global_player_root')
 
 
+def computer_bpa_over_time(v):
+    """Compute BPA over time for player so far."""
+    games = v['wins'] + v['losses']
+    ratio = 0.0 if games == 0 else 1.0 * v['wins'] / games
+    cpg = 0.0 if games == 0 else 6.0 * v['made_cups'] / v['possible_cups']
+    bpa = ratio + (3.0 * cpg / 6.0)
+    v['bpa_over_time'].append([len(v['bpa_over_time']), bpa])
+
+
 class Match(ndb.Model):
     """A main model for representing an individual Match entry."""
     author = ndb.StringProperty(indexed=False)
@@ -125,7 +134,7 @@ class MainPage(webapp2.RequestHandler):
         # Calculate stats and display.
         user_stats = {}
         for player in players:
-            user_stats[player.ldap] = {'wins': 0, 'losses': 0, 'possible_cups': 0, 'made_cups': 0}
+            user_stats[player.ldap] = {'wins': 0, 'losses': 0, 'possible_cups': 0, 'made_cups': 0, 'bpa_over_time': []}
         # Run through each game and update the base users stats.
         for match in matches:
             user_stats[match.winner1]['wins'] += 1
@@ -140,6 +149,10 @@ class MainPage(webapp2.RequestHandler):
             user_stats[match.loser1]['possible_cups'] += match.loser_total_cups
             user_stats[match.loser2]['made_cups'] += match.loser2_cups
             user_stats[match.loser2]['possible_cups'] += match.loser_total_cups
+            computer_bpa_over_time(user_stats[match.winner1])
+            computer_bpa_over_time(user_stats[match.winner2])
+            computer_bpa_over_time(user_stats[match.loser1])
+            computer_bpa_over_time(user_stats[match.loser2])
 
         # Run through each player and update calculated user stats.
         sortable_user_list = []
@@ -157,6 +170,8 @@ class MainPage(webapp2.RequestHandler):
 
         # Sort by BPA.
         sorted_user_stats = sorted(sortable_user_list, key=itemgetter('bpa'), reverse=True)
+        for i in range(len(sorted_user_stats)):
+            sorted_user_stats[i]['rank'] = (i + 1)
 
         template_args['sorted_user_stats'] = sorted_user_stats
         template_args['season_name'] = season_name
