@@ -113,7 +113,7 @@ class MainPage(webapp2.RequestHandler):
         # Match that had just been written would not show up in a
         # query.
         match_query = Match.query(
-            ancestor=season_key(season_name)).order(-Match.date)
+            ancestor=season_key(season_name)).order(Match.date)
         matches = match_query.fetch(100)
 
         for match in matches:
