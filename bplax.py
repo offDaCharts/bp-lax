@@ -16,6 +16,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 
 DEFAULT_SEASON_NAME = '2018_A'
+MATCHES_TO_QUALIFY = 6
 
 # We set a parent key on the 'Matches' to ensure that they are all
 # in the same entity group. Queries across the single entity group
@@ -170,8 +171,14 @@ class MainPage(webapp2.RequestHandler):
 
         # Sort by BPA.
         sorted_user_stats = sorted(sortable_user_list, key=itemgetter('bpa'), reverse=True)
+        qualified_rank = 1
         for i in range(len(sorted_user_stats)):
             sorted_user_stats[i]['rank'] = (i + 1)
+            if sorted_user_stats[i]['games'] >= MATCHES_TO_QUALIFY:
+                sorted_user_stats[i]['qualified_rank'] = qualified_rank
+                qualified_rank += 1
+            else:
+                sorted_user_stats[i]['qualified_rank'] = '-'
 
         template_args['sorted_user_stats'] = sorted_user_stats
         template_args['season_name'] = season_name

@@ -14,6 +14,11 @@ indexes:
   ancestor: yes
   properties:
   - name: date
+
+- kind: Match
+  ancestor: yes
+  properties:
+  - name: date
     direction: desc
 
 - kind: Player

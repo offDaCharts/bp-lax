@@ -188,6 +188,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Rank</th>
+                    <th>Qualified</th>
                     <th>Player</th>
                     <th>Wins</th>
                     <th>Losses</th>
@@ -203,6 +204,7 @@
                 {% for v in sorted_user_stats %}
                     <tr>
                         <td>{{v['rank']}}</td>
+                        <td>{{v['qualified_rank']}}</td>
                         <td>{{v['ldap']}}</td>
                         <td>{{v['wins']}}</td>
                         <td>{{v['losses']}}</td>
