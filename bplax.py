@@ -15,7 +15,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-DEFAULT_SEASON_NAME = '2018_A'
+DEFAULT_SEASON_NAME = '2018_B'
 MATCHES_TO_QUALIFY = 6
 
 # We set a parent key on the 'Matches' to ensure that they are all
