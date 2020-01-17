@@ -15,7 +15,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-DEFAULT_SEASON_NAME = '2018_B'
+DEFAULT_SEASON_NAME = '2020_A'
 MATCHES_TO_QUALIFY = 6
 
 # We set a parent key on the 'Matches' to ensure that they are all
@@ -88,7 +88,7 @@ class MainPage(webapp2.RequestHandler):
 
         # Calculate list of players for dropdown.
         player_query = Player.query(
-            ancestor=player_key()).order(Player.date)
+            ancestor=player_key())
         players = player_query.fetch(1000)
 
        # Create logout url.
@@ -101,6 +101,7 @@ class MainPage(webapp2.RequestHandler):
         template_args = {
             'sign_query_params': sign_query_params,
             'season_name': cgi.escape(season_name),
+            'current_season_name': cgi.escape(DEFAULT_SEASON_NAME),
             'sign_query_params': sign_query_params,
             'url': url,
             'url_linktext': url_linktext,

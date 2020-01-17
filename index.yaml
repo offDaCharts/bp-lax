@@ -25,3 +25,8 @@ indexes:
   ancestor: yes
   properties:
   - name: date
+
+- kind: Player
+  ancestor: yes
+  properties:
+  - name: ldap
